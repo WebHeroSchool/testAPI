@@ -58,4 +58,5 @@ fetch('https://api.github.com/users/' + name)
 		createAvatar();
 		createUrl();
 	})
+
 	.catch(err => alert('Информация не доступна: ' + err));
