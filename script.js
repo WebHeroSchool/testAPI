@@ -1,5 +1,61 @@
-fetch('https://api.github.com/users/6thSence')
-	.then(res => res.json())
-	.then(json => console.log(json.bio))
+let body = document.body;
+let url = window.location.toString();
+let date = new Date();
 
-	.catch(err => console.log(err));
+let nameFromUrl= (url) => {
+	let getUrl = url.split('=');
+	let name = getUrl[1];
+	if (name == undefined) {
+		name = 'nyushakh';
+	}
+	return name;
+};
+
+let name = nameFromUrl(url);
+const getDate = new Promise((resolve, reject) => {
+	setTimeout(() => date)
+});
+
+fetch('https://api.github.com/users/' + name)
+	.then(res => res.json())
+	.then(json => {
+		if (json.message === "Not Found") {
+			throw json.message;
+		}
+		const avatar = json.avatar_url;
+		const user = json.login;
+		let description = json.bio;
+		if (description == null) {
+			description = 'Информация не доступна';
+		}
+		url = json.url;
+		let createName = () => {
+			let userName = document.createElement('h1');
+			userName.innerHTML = user;
+			body.appendChild(userName);
+		};
+		let createDescription = () => {
+			let userDescription = document.createElement('h3');
+			userDescription.innerHTML = description;
+			body.appendChild(userDescription);
+		};
+		let createAvatar = () => {
+			let userAvatar = document.createElement('img');
+			let newString = document.createElement('br');
+			userAvatar.src = avatar;
+			body.appendChild(userAvatar);
+			body.appendChild(newString);
+		};
+		let createUrl = () => {
+			let userUrl = document.createElement('a');
+			let text = document.createTextNode('profile');
+			userUrl.appendChild(text);
+			userUrl.href = 'https://github.com/' + name;
+			body.appendChild(userUrl);
+		};
+		createName();
+		createDescription();
+		createAvatar();
+		createUrl();
+	})
+	.catch(err => alert('Информация не доступна: ' + err));
